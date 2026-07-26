@@ -23,9 +23,9 @@
 
 ### At a Glance
 
-| Customers analyzed | Revenue-driving segment | Top data quality issue found & fixed | Loyal customer share |
+| Customers analyzed | Total revenue | Revenue-driving segment | Loyal customer share |
 |:---:|:---:|:---:|:---:|
-| **3,900** | Male ($157.9K vs $75.2K female) | 37 missing review ratings, imputed by category median | **80%** |
+| **3,900** | **$233,081** | Male ($157.9K vs $75.2K female) | **80%** |
 
 ---
 
@@ -33,13 +33,17 @@
 
 - [Project Overview](#-project-overview)
 - [Dataset](#-dataset)
+- [Business Questions](#-business-questions)
 - [Data Preparation](#-data-preparation-python)
+- [Statistical Analysis](#-statistical-analysis)
+- [Business KPIs](#-business-kpis)
 - [Key Findings](#-key-findings-sql)
 - [Dashboard](#-dashboard-power-bi)
 - [Business Recommendations](#-business-recommendations)
 - [Repository Structure](#-repository-structure)
 - [Running It Locally](#-running-it-locally)
 - [Skills Demonstrated](#-skills-demonstrated)
+- [Future Improvements](#-future-improvements)
 
 ---
 
@@ -70,6 +74,23 @@ This project analyzes 3,900 customer shopping transactions to uncover patterns i
 
 ---
 
+## ❓ Business Questions
+
+This analysis was scoped to answer:
+
+- Which gender contributes the most revenue?
+- Do customers who use discounts still spend above average?
+- Which products are rated highest by customers?
+- Does shipping type affect purchase amount?
+- Does subscription status affect spending or revenue share?
+- Which products rely most heavily on discounts to sell?
+- How do customers break down by loyalty segment (New / Returning / Loyal)?
+- What are the top-selling products within each category?
+- Are repeat buyers more likely to subscribe?
+- Which age group drives the most revenue?
+
+---
+
 ## 🧹 Data Preparation (Python)
 
 - Loaded and inspected the raw CSV with `pandas`
@@ -78,6 +99,30 @@ This project analyzes 3,900 customer shopping transactions to uncover patterns i
 - Engineered `age_group` (quartile-based bins) and `purchase_frequency_days` (mapped from purchase frequency labels)
 - Verified `discount_applied` and `promo_code_used` were redundant and dropped the latter
 - Loaded the cleaned dataset into PostgreSQL for SQL analysis
+
+---
+
+## 📐 Statistical Analysis
+
+Additional checks run in the notebook beyond the core cleaning steps:
+
+| Check | Result |
+|---|---|
+| Correlation (age, purchase amount, rating, previous purchases) | All pairwise correlations within ±0.05 — no meaningful relationship between these fields |
+| Outlier detection (purchase amount, IQR method) | Upper fence ≈ $144; **zero** values exceed it — spending is bounded ($20–$100), not long-tailed |
+| Distribution shape (purchase amount) | Skewness ≈ 0.01 — essentially symmetric, not the typical right-skewed retail spend pattern |
+
+---
+
+## 📌 Business KPIs
+
+| Metric | Value |
+|---|---|
+| Total Revenue | **$233,081** |
+| Average Order Value | **$59.76** |
+| Customers | **3,900** |
+| Average Review Rating | **3.75** |
+| Subscriber Share | **27.0%** |
 
 ---
 
@@ -129,6 +174,7 @@ Interactive filters for subscription status, gender, category, and shipping type
 ├── Customer_Shopping_Behavior_Analysis.pdf       # Full written report
 ├── Customer-Shopping-Behavior-Analysis.pptx      # Stakeholder presentation
 ├── customer_shopping_behavior.csv                # Raw dataset
+├── requirements.txt                              # Python dependencies
 ├── dashboard_preview.png                         # Dashboard image used in this README
 └── workflow_diagram.png                          # Workflow image used in this README
 ```
@@ -136,7 +182,7 @@ Interactive filters for subscription status, gender, category, and shipping type
 ## ⚙️ Running It Locally
 
 ```bash
-pip install pandas sqlalchemy psycopg2-binary
+pip install -r requirements.txt
 ```
 
 Open the notebook and run cells top to bottom. The database connection cells expect a local PostgreSQL instance — set credentials via environment variables rather than hardcoding them:
@@ -151,6 +197,16 @@ password = os.environ.get("DB_PASSWORD")
 ## 🧠 Skills Demonstrated
 
 `Python` · `pandas` · `Data Cleaning` · `Feature Engineering` · `SQL` · `PostgreSQL` · `Power BI` · `Data Visualization` · `Customer Segmentation` · `Business Reporting`
+
+---
+
+## 🚀 Future Improvements
+
+- Customer churn prediction model
+- RFM (Recency, Frequency, Monetary) segmentation
+- Interactive Streamlit dashboard as a lightweight alternative to Power BI
+- Deploy the dashboard for public access
+- Automate data refresh for real-time updates
 
 ---
 
