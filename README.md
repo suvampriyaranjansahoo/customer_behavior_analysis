@@ -1,7 +1,7 @@
 <h1 align="center">🛍️ Customer Shopping Behavior Analysis</h1>
 
 <p align="center">
-  End-to-end analytics project: data cleaning → SQL analysis → dashboarding → business recommendations.
+  End-to-end analytics project: data cleaning, SQL analysis, dashboarding, and business recommendations.
 </p>
 
 <p align="center">
@@ -31,15 +31,18 @@
 
 ## 📋 Table of Contents
 
+- [Executive Summary](#-executive-summary)
 - [Project Overview](#-project-overview)
 - [Dataset](#-dataset)
 - [Business Questions](#-business-questions)
 - [Data Preparation](#-data-preparation-python)
 - [Statistical Analysis](#-statistical-analysis)
 - [Business KPIs](#-business-kpis)
+- [Customer Segmentation](#-customer-segmentation)
 - [Key Findings](#-key-findings-sql)
 - [Dashboard](#-dashboard-power-bi)
 - [Business Recommendations](#-business-recommendations)
+- [Conclusion](#-conclusion)
 - [Repository Structure](#-repository-structure)
 - [Running It Locally](#-running-it-locally)
 - [Skills Demonstrated](#-skills-demonstrated)
@@ -47,9 +50,21 @@
 
 ---
 
+## 📝 Executive Summary
+
+**Business problem:** a retail business wants to understand customer purchasing behavior to improve marketing, retention, and revenue decisions.
+
+**Objectives:** analyze customer demographics and spending patterns, identify high-value customer segments, evaluate the impact of subscription status on spending, examine product and category preferences, and turn the findings into business recommendations.
+
+**Tools used:** Python (pandas, seaborn, matplotlib), PostgreSQL, SQL, Power BI.
+
+**Outcome:** the analysis shows where revenue actually comes from (gender, age group, and spend segment), where retention is working, and where the discount strategy may be cutting into margin more than it needs to.
+
+---
+
 ## 🔎 Project Overview
 
-This project analyzes 3,900 customer shopping transactions to uncover patterns in spending, product preferences, and subscription behavior, then translates those patterns into concrete business recommendations — the same workflow a retail analytics team would follow end to end.
+This project analyzes 3,900 customer shopping transactions to uncover patterns in spending, product preferences, and subscription behavior, then translates those patterns into concrete business recommendations. It follows the same workflow a retail analytics team would use end to end.
 
 <p align="center">
   <img src="./workflow_diagram.png" alt="Project workflow: business problem to Python EDA to SQL to Power BI to report to presentation to GitHub" width="850">
@@ -60,7 +75,7 @@ This project analyzes 3,900 customer shopping transactions to uncover patterns i
 | Data cleaning, feature engineering, EDA | Python (pandas) |
 | Business question answering | SQL (PostgreSQL) |
 | Interactive dashboard | Power BI |
-| Report & stakeholder presentation | PDF + slides |
+| Report and stakeholder presentation | PDF and slides |
 
 ---
 
@@ -70,7 +85,7 @@ This project analyzes 3,900 customer shopping transactions to uncover patterns i
 - Customer demographics: age, gender, location, subscription status
 - Purchase details: item, category, amount, season, size, color
 - Behavior signals: discount usage, previous purchases, purchase frequency, review rating, shipping type
-- **37 missing values** in `Review Rating` — imputed with the median rating per product category
+- **37 missing values** in `Review Rating`, imputed with the median rating per product category
 
 ---
 
@@ -108,9 +123,9 @@ Additional checks run in the notebook beyond the core cleaning steps:
 
 | Check | Result |
 |---|---|
-| Correlation (age, purchase amount, rating, previous purchases) | All pairwise correlations within ±0.05 — no meaningful relationship between these fields |
-| Outlier detection (purchase amount, IQR method) | Upper fence ≈ $144; **zero** values exceed it — spending is bounded ($20–$100), not long-tailed |
-| Distribution shape (purchase amount) | Skewness ≈ 0.01 — essentially symmetric, not the typical right-skewed retail spend pattern |
+| Correlation (age, purchase amount, rating, previous purchases) | All pairwise correlations within ±0.05, so there's no meaningful relationship between these fields |
+| Outlier detection (purchase amount, IQR method) | Upper fence is about $144, and zero values exceed it. Spending is bounded ($20 to $100), not long-tailed |
+| Distribution shape (purchase amount) | Skewness is about 0.01, essentially symmetric, not the typical right-skewed retail spend pattern |
 
 ---
 
@@ -126,22 +141,37 @@ Additional checks run in the notebook beyond the core cleaning steps:
 
 ---
 
+## 🎯 Customer Segmentation
+
+Customers were split into four equal-sized groups (Low, Medium, High, Premium) by purchase amount quartile.
+
+| Segment | Revenue | Share of Total Revenue |
+|---|---|---|
+| Premium | $84,350 | **36.2%** |
+| High | $70,197 | 30.1% |
+| Medium | $48,602 | 20.9% |
+| Low | $29,932 | 12.8% |
+
+Each segment holds the same number of customers, but revenue splits unevenly. Premium customers generate close to 3 times the revenue of Low spenders despite being the same size group, which makes them a concrete target for loyalty or retention offers.
+
+---
+
 ## 📈 Key Findings (SQL)
 
 Ten business questions were answered directly against the cleaned dataset. Full queries are in [`customer_behavior_sql_queries.sql`](./customer_behavior_sql_queries.sql).
 
 | # | Question | Finding |
 |---|---|---|
-| 1 | Revenue by gender | Male customers generate **$157,890** vs. **$75,191** for female customers — roughly double |
+| 1 | Revenue by gender | Male customers generate **$157,890** vs. **$75,191** for female customers, roughly double |
 | 2 | High-spending discount users | **839 customers** used a discount and still spent above the average purchase amount |
 | 3 | Top 5 rated products | Gloves (3.86), Sandals (3.84), Boots (3.82), Hat (3.80), Skirt (3.78) |
-| 4 | Standard vs. Express shipping | Express customers spend slightly more on average (**$60.48 vs. $58.46**, ~3.5%) |
+| 4 | Standard vs. Express shipping | Express customers spend slightly more on average (**$60.48 vs. $58.46**, about 3.5%) |
 | 5 | Subscribers vs. non-subscribers | Non-subscribers spend marginally more on average ($59.87 vs. $59.49); subscribers contribute **27%** of revenue |
 | 6 | Most discount-dependent products | Hat (50% of purchases discounted), Sneakers (49.7%), Coat (49.1%), Sweater (48.2%), Pants (47.4%) |
-| 7 | Customer segmentation | Loyal: **3,116** (80%) · Returning: **701** (18%) · New: **83** (2%) |
-| 8 | Top 3 products per category | Accessories → Jewelry; Clothing → Blouse/Pants; Footwear → Sandals; Outerwear → Jacket |
-| 9 | Repeat buyers (>5 purchases) & subscription | 958 subscribe, 2,518 don't — no strong link between repeat buying and subscribing |
-| 10 | Revenue by age group | Young Adult ($62,143) leads, followed by Middle-aged, Adult, and Senior — a fairly even spread |
+| 7 | Customer segmentation | Loyal: **3,116** (80%), Returning: **701** (18%), New: **83** (2%) |
+| 8 | Top 3 products per category | Accessories: Jewelry; Clothing: Blouse/Pants; Footwear: Sandals; Outerwear: Jacket |
+| 9 | Repeat buyers (>5 purchases) and subscription | 958 subscribe, 2,518 don't, so there's no strong link between repeat buying and subscribing |
+| 10 | Revenue by age group | Young Adult ($62,143) leads, followed by Middle-aged, Adult, and Senior in a fairly even spread |
 
 ---
 
@@ -157,11 +187,19 @@ Interactive filters for subscription status, gender, category, and shipping type
 
 ## 💡 Business Recommendations
 
-- **Boost subscriptions** — subscribers currently spend about the same as non-subscribers, so the program isn't yet driving extra spend; exclusive perks could change that.
-- **Convert New → Returning → Loyal** — only 2% of customers are "New," suggesting strong retention once someone makes a second purchase; worth investigating what drives that early conversion.
-- **Rebalance discount strategy** — several products (Hat, Sneakers, Coat) rely on discounts for roughly half their sales; review margin impact.
-- **Lean into express shipping** — it correlates with modestly higher spend and could be promoted as an upsell.
-- **Target the Young Adult segment** — the highest revenue-contributing age group.
+- **Boost subscriptions.** Subscribers currently spend about the same as non-subscribers, so the program isn't yet driving extra spend. Exclusive perks could change that.
+- **Convert New to Returning to Loyal.** Only 2% of customers are "New," suggesting strong retention once someone makes a second purchase. Worth investigating what drives that early conversion.
+- **Rebalance discount strategy.** Several products (Hat, Sneakers, Coat) rely on discounts for roughly half their sales. Review the margin impact.
+- **Lean into express shipping.** It correlates with modestly higher spend and could be promoted as an upsell.
+- **Target Premium and Young Adult segments.** Premium spenders generate close to 3 times the revenue of Low spenders, and Young Adult is the highest revenue-contributing age group.
+
+---
+
+## ✅ Conclusion
+
+This project analyzed 3,900 customer transactions using Python, SQL, PostgreSQL, and Power BI. The work covered cleaning and preparing the raw data, answering ten business questions in SQL, checking the numeric fields statistically, and grouping customers into spend-based segments.
+
+The main findings: male customers generate roughly double the revenue of female customers, 80% of customers fall into the loyal segment, Premium spenders generate close to 3 times the revenue of Low spenders, and several products depend on discounts for around half their sales. These findings feed directly into the business recommendations above.
 
 ---
 
@@ -185,7 +223,7 @@ Interactive filters for subscription status, gender, category, and shipping type
 pip install -r requirements.txt
 ```
 
-Open the notebook and run cells top to bottom. The database connection cells expect a local PostgreSQL instance — set credentials via environment variables rather than hardcoding them:
+Open the notebook and run cells top to bottom. The database connection cells expect a local PostgreSQL instance. Set credentials via environment variables rather than hardcoding them:
 
 ```python
 import os
@@ -212,7 +250,7 @@ password = os.environ.get("DB_PASSWORD")
 
 ## 📄 License
 
-MIT — see [LICENSE.txt](./LICENSE.txt)
+MIT, see [LICENSE.txt](./LICENSE.txt)
 
 <p align="center">
   <b>Suvam Priyaranjan Sahoo</b><br>
