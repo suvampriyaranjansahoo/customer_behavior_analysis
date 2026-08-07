@@ -25,7 +25,7 @@
 
 | Customers analyzed | Total revenue | Revenue-driving segment | Loyal customer share |
 |:---:|:---:|:---:|:---:|
-| **3,900** | **$233,081** | Male ($157.9K vs $75.2K female) | **80%** |
+| **10326** | **$233,081** | Male ($157.9K vs $75.2K female) | **80%** |
 
 ---
 
@@ -81,7 +81,7 @@ This project analyzes 3,900 customer shopping transactions to uncover patterns i
 
 ## 🗂 Dataset
 
-- **3,900 rows × 18 columns** of retail transaction data
+- **10326 rows × 18 columns** of retail transaction data
 - Customer demographics: age, gender, location, subscription status
 - Purchase details: item, category, amount, season, size, color
 - Behavior signals: discount usage, previous purchases, purchase frequency, review rating, shipping type
